@@ -1,1 +1,1 @@
-# projeto-gerador-de-senhas
+# projeto-alura
