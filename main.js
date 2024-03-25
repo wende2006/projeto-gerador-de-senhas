@@ -1,63 +1,78 @@
-const botoes = document.querySelectorAll(".botao");
-const textos = document.querySelectorAll(".aba-conteudo");
+const numerosenha = document.querySelector('.parametro-senha__texto');
+let tamanhosenha = 12;
+numerosenha.textContent = tamanhosenha;
+const letrasmaiusculas = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const letrasminusculas = 'abcdefghijklmopqrstuvwxyz';
+const numeros = '0123456789';
+const simbolos = '!@%*?';
+const botoes = document.querySelectorAll('.parametro-senha__botao')
+const camposenha = document.querySelector ('#campo-senha');
+const checkbox = document.querySelectorAll('.checkbox');
+const forcasenha = document.querySelector('.forca')
 
-for (let i = 0; i < botoes.length; i++) {
-    botoes[i].onclick = function () {
+botoes[0].onclick = diminuitamanho;
+botoes[1].onclick = aumentatamanho;
 
-        for (let j = 0; j < botoes.length; j++) {
-            botoes[j].classList.remove("ativo");
-            textos[j].classList.remove("ativo");
-        }
-
-        botoes[i].classList.add("ativo");
-        textos[i].classList.add("ativo");
+function diminuitamanho(){
+     if(tamanhosenha > 1){
+        //tamanhosenha=tamanhosenha-1;
+        tamanhosenha--;
     }
+    numerosenha.textContent = tamanhosenha;
+    gerasenha();
 }
-
-const contadores = document.querySelectorAll(".contador");
-const tempoObjetivo1 = new Date("2024-05-05T00:00:00");
-const tempoObjetivo2 = new Date("2024-08-05T00:00:00");
-const tempoObjetivo3 = new Date("2024-08-30T00:00:00");
-const tempoObjetivo4 = new Date("2024-09-22T00:00:00");
-
-const tempos = [tempoObjetivo1, tempoObjetivo2, tempoObjetivo3, tempoObjetivo4];
-
-
-
-function calculaTempo(tempoObjetivo) {
-    let tempoAtual = new Date();
-    let tempoFinal = tempoObjetivo - tempoAtual;
-    let segundos = Math.floor(tempoFinal / 1000);
-    let minutos = Math.floor(segundos / 60);
-    let horas = Math.floor(minutos / 60);
-    let dias = Math.floor(horas / 24);
-
-    segundos %= 60;
-    minutos %= 60;
-    horas %= 24;
-    if (tempoFinal > 0){
-        return [dias,horas,minutos,segundos];
-    } else {
-        return [0,0,0,0];
+function aumentatamanho(){
+    if(tamanhosenha <20){
+        //tamanhosenha = tamanhosenha+1;
+        tamanhosenha++;
     }
-
+    numerosenha.textContent = tamanhosenha;
+    gerasenha();
 }
-function atualizaCronometro(){
-    for (let i=0; i<contadores.length;i++){
-        document.getElementById("dias"+i).textContent = calculaTempo(tempos[i])[0];
-        document.getElementById("horas"+i).textContent = calculaTempo(tempos[i])[1];
-        document.getElementById("min"+i).textContent = calculaTempo(tempos[i])[2];
-        document.getElementById("seg"+i).textContent = calculaTempo(tempos[i])[3];
-        console.log("seg"+i);
+for (i=0; i < checkbox.length;i++){
+    checkbox[i].onclick = gerasenha;
+}
+gerasenha();
+
+function gerasenha(){
+    let alfabeto = '';
+    if (checkbox[0].checked){
+        alfabeto = alfabeto + letrasmaiusculas;
     }
+    if (checkbox[1].checked){
+        alfabeto = alfabeto + letrasminusculas;
+    }
+    if (checkbox[2].checked){
+        alfabeto = alfabeto + numeros;
+    }
+    if (checkbox[3].checked){
+        alfabeto = alfabeto + simbolos;
+    }
+    let senha = '';
+
+    for(let i = 0; i < tamanhosenha;i++){
+
+        let numeroaleatorio = Math.random() * alfabeto.length;
+        numeroaleatorio = Math.floor(numeroaleatorio);
+        senha=senha + alfabeto[numeroaleatorio];
+    }
+    camposenha.value = senha;
+
+    classificasenha(alfabeto.length);
 }
 
-
-
-
-function comecaCronometro(){
-    atualizaCronometro();
-    setInterval(atualizaCronometro, 1000);
+function classificasenha(tamanhoalfabeto){
+    let entropia = tamanhosenha * Math.log2(tamanhoalfabeto);
+    console.log(entropia);
+    forcasenha.classList.remove('fraca','media','forte');
+        if (entropia > 57){
+           forcasenha.classList.add('forte');
+        } else if (entropia > 35 && entropia < 57) {
+            forcasenha.classList.add('media');
+        } else if (entropia <= 35){
+            forcasenha.classList.add('fraca');
+}  
+const valorentropia = document.querySelector('.entropia');
+valorentropia.textContent = "um computador pode levar até " + Math.floor(2**entropia/
+(100e6*60*60*24)) +  " dias para descobir esta senha ";
 }
-
-comecaCronometro();
