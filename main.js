@@ -5,31 +5,29 @@ const letrasmaiusculas = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const letrasminusculas = 'abcdefghijklmopqrstuvwxyz';
 const numeros = '0123456789';
 const simbolos = '!@%*?';
-const botoes = document.querySelectorAll('.parametro-senha__botao')
+const botoes = document.querySelectorAll('.parametro-senha__botao');
 const camposenha = document.querySelector ('#campo-senha');
 const checkbox = document.querySelectorAll('.checkbox');
-const forcasenha = document.querySelector('.forca')
+const forcasenha = document.querySelector('.forca');
 
 botoes[0].onclick = diminuitamanho;
 botoes[1].onclick = aumentatamanho;
 
 function diminuitamanho(){
-     if(tamanhosenha > 1){
-        //tamanhosenha=tamanhosenha-1;
+    if(tamanhosenha > 1){
         tamanhosenha--;
     }
     numerosenha.textContent = tamanhosenha;
     gerasenha();
 }
 function aumentatamanho(){
-    if(tamanhosenha <20){
-        //tamanhosenha = tamanhosenha+1;
+    if(tamanhosenha < 20){
         tamanhosenha++;
     }
     numerosenha.textContent = tamanhosenha;
     gerasenha();
 }
-for (i=0; i < checkbox.length;i++){
+for (let i = 0; i < checkbox.length; i++){
     checkbox[i].onclick = gerasenha;
 }
 gerasenha();
@@ -37,24 +35,23 @@ gerasenha();
 function gerasenha(){
     let alfabeto = '';
     if (checkbox[0].checked){
-        alfabeto = alfabeto + letrasmaiusculas;
+        alfabeto += letrasmaiusculas;
     }
     if (checkbox[1].checked){
-        alfabeto = alfabeto + letrasminusculas;
+        alfabeto += letrasminusculas;
     }
     if (checkbox[2].checked){
-        alfabeto = alfabeto + numeros;
+        alfabeto += numeros;
     }
     if (checkbox[3].checked){
-        alfabeto = alfabeto + simbolos;
+        alfabeto += simbolos;
     }
     let senha = '';
 
-    for(let i = 0; i < tamanhosenha;i++){
-
+    for(let i = 0; i < tamanhosenha; i++){
         let numeroaleatorio = Math.random() * alfabeto.length;
         numeroaleatorio = Math.floor(numeroaleatorio);
-        senha=senha + alfabeto[numeroaleatorio];
+        senha += alfabeto[numeroaleatorio];
     }
     camposenha.value = senha;
 
@@ -63,16 +60,27 @@ function gerasenha(){
 
 function classificasenha(tamanhoalfabeto){
     let entropia = tamanhosenha * Math.log2(tamanhoalfabeto);
-    console.log(entropia);
     forcasenha.classList.remove('fraca','media','forte');
-        if (entropia > 57){
-           forcasenha.classList.add('forte');
-        } else if (entropia > 35 && entropia < 57) {
-            forcasenha.classList.add('media');
-        } else if (entropia <= 35){
-            forcasenha.classList.add('fraca');
-}  
-const valorentropia = document.querySelector('.entropia');
-valorentropia.textContent = "um computador pode levar até " + Math.floor(2**entropia/
-(100e6*60*60*24)) +  " dias para descobir esta senha ";
+    if (entropia > 57){
+        forcasenha.classList.add('forte');
+    } else if (entropia > 35 && entropia < 57) {
+        forcasenha.classList.add('media');
+    } else if (entropia <= 35){
+        forcasenha.classList.add('fraca');
+    }  
+
+    const valorentropia = document.querySelector('.entropia');
+    const dias = Math.floor(2**entropia / (100e6 * 60 * 60 * 24));
+    const anos = Math.floor(dias / 365.25);
+    const meses = Math.floor((dias % 365.25) / 30.44);
+
+    if (anos > 0 && meses > 0) {
+        valorentropia.textContent = "um computador pode levar até " + anos + " anos e " + meses + " meses para descobrir esta senha";
+    } else if (anos > 0) {
+        valorentropia.textContent = "um computador pode levar até " + anos + " anos para descobrir esta senha";
+    } else if (meses > 0) {
+        valorentropia.textContent = "um computador pode levar até " + meses + " meses para descobrir esta senha";
+    } else {
+        valorentropia.textContent = "um computador pode levar menos de um mês para descobrir esta senha";
+    }
 }
